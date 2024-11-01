@@ -13,7 +13,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final todosList = Todo.todoList();
+  List<Todo> _foundToDo = [];
   final _todoController = TextEditingController();
+
+  @override
+  void initState() {
+    _foundToDo = todosList;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +44,7 @@ class _HomeState extends State<Home> {
                             style: TextStyle(
                                 fontSize: 25, fontWeight: FontWeight.w500),
                           )),
-                      for (Todo todo in todosList)
+                      for (Todo todo in _foundToDo.reversed)
                         TodoItem(
                           todo: todo,
                           onToDoChanged: _handleToDoChange,
@@ -70,6 +77,7 @@ class _HomeState extends State<Home> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextField(
+                      controller: _todoController,
                       decoration: InputDecoration(
                           hintText: 'Add a new task here',
                           border: InputBorder.none),
@@ -124,12 +132,27 @@ class _HomeState extends State<Home> {
     _todoController.clear();
   }
 
+  void _runFilter(String enteredKeyword) {
+    List<Todo> results = [];
+    if (enteredKeyword.isEmpty) {
+      results = todosList;
+    }
+    else{
+      results = todosList.where((item) => item.todoText!.toLowerCase().contains(enteredKeyword.toLowerCase())).toList();
+    }
+
+    setState(() {
+      _foundToDo = results;
+    });
+  }
+
   Widget searchBox() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
           color: Colors.white, borderRadius: BorderRadius.circular(20)),
-      child: const TextField(
+      child: TextField(
+        onChanged: (value) => _runFilter(value),
         decoration: InputDecoration(
             contentPadding: EdgeInsets.all(0),
             prefixIcon: Icon(Icons.search, color: tdGrey, size: 20),

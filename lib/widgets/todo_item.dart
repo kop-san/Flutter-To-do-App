@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/model/todo.dart';
+import '../model/todo.dart';
 import '../constrants/colors.dart';
 
 class TodoItem extends StatelessWidget {
