@@ -15,11 +15,18 @@ class _HomeState extends State<Home> {
   final todosList = Todo.todoList();
   List<Todo> _foundToDo = [];
   final _todoController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     _foundToDo = todosList;
     super.initState();
+
+    _focusNode.addListener((){
+      if(!_focusNode.hasFocus){
+        _todoController.clear();
+      }
+    });
   }
 
   @override
@@ -80,7 +87,11 @@ class _HomeState extends State<Home> {
                       controller: _todoController,
                       decoration: InputDecoration(
                           hintText: 'Add a new task here',
-                          border: InputBorder.none),
+                          border: InputBorder.none
+                          ),
+                          onSubmitted: (value){
+                            _addToDoItem(value);
+                          },
                     ),
                   ),
                 ),
@@ -124,6 +135,7 @@ class _HomeState extends State<Home> {
   }
 
   void _addToDoItem(String toDo) {
+    if (toDo.isEmpty) return;
     setState(() {
       todosList.add(Todo(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
